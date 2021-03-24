@@ -10,35 +10,33 @@ app.get("/location/:room", (req, res) => {
   res.render("rooms", { roomId: req.params.room });
 });
 
+// store the location of user key is user if and location is lat and long
 const location = {};
 
 io.on("connection", (socket) => {
-  console.log("new user connected");
-
   //joining room of userID
   socket.on("join-room", (roomId, userId) => {
     socket.join(roomId);
 
-    // update new loaction of the admin
+    // current admin location or null
+    socket.emit("admin-location", location[roomId]);
+
+    // update new loaction of the user
     socket.on("new-location", (newLocation) => {
-      if (userId === roomId) {
-        location.roomId = newLocation;
-      }
-      io.in(roomId).emit("admin-location", location.roomId);
+      location[userId] = newLocation;
+      io.in(userId).emit("admin-location", location[userId]);
     });
 
-    // show all new location of admin
-
+    // delte location of user on disconnection
     socket.on("disconnect", () => {
-      if (userId === roomId) {
-        delete location.roomId;
-        io.in(roomId).emit("admin-location", location.roomId);
-      }
+      delete location[userId];
+      io.in(userId).emit("admin-location", location[userId]);
       console.log("a user disconnected");
     });
   });
 });
 
+//connection to server
 http.listen(5000, () => {
   console.log("http://localhost:5000");
 });

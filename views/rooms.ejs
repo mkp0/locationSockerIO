@@ -11,23 +11,27 @@
     <title>Document</title>
   </head>
   <body>
+    <!-- location of roomID -->
     <h1>location of id <%=roomId %> :</h1>
+    <!-- loction displayer -->
     <div id="newloc"></div>
 
     <script>
       let socket = io();
-      let lat = null;
-      let long = null;
-      console.log(socket);
       const heading2 = document.getElementById("newloc");
 
+      //input id of user
       const USER_ID = prompt("your id : ");
+      //joing socket room
+      socket.emit("join-room", ROOM_ID, USER_ID);
+      // input value of current latitude and longitude
       const LATI = prompt("Latitude : ");
       const LONGI = prompt("Longitude : ");
-      socket.emit("join-room", ROOM_ID, USER_ID);
 
+      //send the latest location of current user
       socket.emit("new-location", { lat: Number(LATI), long: Number(LONGI) });
 
+      //location of the params of we wanna find
       socket.on("admin-location", (val) => {
         if (!val) {
           heading2.innerHTML = "";
