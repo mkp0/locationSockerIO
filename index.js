@@ -14,9 +14,12 @@ app.get("/location/:room", (req, res) => {
 const locations = {};
 
 io.on("connection", (socket) => {
-  // update new loaction of the user
+  // update new loaction of the user whenvever he/she connected to socket.io
+
   socket.on("new-location", (locate) => {
+    //locate object store two paramerter one {userId} and second {location}
     locations[locate.userId] = locate.location;
+    //here we emitting the location of user
     io.in(locate.userId).emit("admin-location", locate.location);
     console.log(locations);
   });

@@ -30,7 +30,7 @@
 
       //send the latest location of current user
       socket.emit("new-location", {
-        location: { lat: Number(LATI), long: Number(LONGI) },
+        location: { lat: Number(LATI), lon: Number(LONGI) },
         userId: USER_ID,
       });
 
