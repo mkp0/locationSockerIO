@@ -11,26 +11,27 @@ app.get("/location/:room", (req, res) => {
 });
 
 // store the location of user key is user if and location is lat and long
-const location = {};
+const locations = {};
 
 io.on("connection", (socket) => {
+  // update new loaction of the user
+  socket.on("new-location", (locate) => {
+    locations[locate.userId] = locate.location;
+    io.in(locate.userId).emit("admin-location", locate.location);
+    console.log(locations);
+  });
+
   //joining room of userID
   socket.on("join-room", (roomId, userId) => {
     socket.join(roomId);
 
     // current admin location or null
-    socket.emit("admin-location", location[roomId]);
-
-    // update new loaction of the user
-    socket.on("new-location", (newLocation) => {
-      location[userId] = newLocation;
-      io.in(userId).emit("admin-location", location[userId]);
-    });
+    socket.emit("admin-location", locations[roomId]);
 
     // delte location of user on disconnection
     socket.on("disconnect", () => {
-      delete location[userId];
-      io.in(userId).emit("admin-location", location[userId]);
+      delete locations[userId];
+      io.in(userId).emit("admin-location", locations[userId]);
       console.log("a user disconnected");
     });
   });

@@ -29,7 +29,10 @@
       const LONGI = prompt("Longitude : ");
 
       //send the latest location of current user
-      socket.emit("new-location", { lat: Number(LATI), long: Number(LONGI) });
+      socket.emit("new-location", {
+        location: { lat: Number(LATI), long: Number(LONGI) },
+        userId: USER_ID,
+      });
 
       //location of the params of we wanna find
       socket.on("admin-location", (val) => {
